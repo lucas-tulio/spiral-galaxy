@@ -33,6 +33,8 @@
 
 			camera, scene, renderer;
 
+			var PI2 = Math.PI * 2;
+
 			init();
 			animate();
 
@@ -57,25 +59,11 @@
 
 				// particles
 
-				var PI2 = Math.PI * 2;
-				var material = new THREE.SpriteCanvasMaterial( {
-
-					color: 0xffffff,
-					program: function ( context ) {
-
-						context.beginPath();
-						context.arc(0, 0, 0.5, 0, PI2, true );
-						context.fill();
-
-					}
-
-				} );
-
 				for ( var i = 0; i < 1000; i ++ ) {
 
-					particle = new THREE.Sprite( material );
+					particle = new THREE.Sprite(generateStar());
 					particle.position.x = Math.random() * 5 - 4;
-					particle.position.y = Math.random() * 2 - 1;
+					particle.position.y = Math.random() * 0.1 - 0.05;
 					particle.position.z = Math.random() * 5 - 4;
 					// particle.position.normalize();
 					particle.position.multiplyScalar( Math.random() * 10 + 450 );
@@ -88,6 +76,36 @@
 				// Resize listener
 				window.addEventListener( 'resize', onWindowResize, false );
 
+			}
+
+			function generateStar() {
+
+				var chance = Math.random();
+				var color, size;
+
+				if(chance <= 0.85) {
+					color = 0xff0000;
+					size = 0.5;
+				} else if(chance > 0.85 && chance < 0.95) {
+					color = 0xffff00;
+					size = 1;
+				} else {
+					color = 0xffffff;
+					size = 2;
+				}
+
+				return new THREE.SpriteCanvasMaterial( {
+
+					color: color,
+					program: function ( context ) {
+
+						context.beginPath();
+						context.arc(0, 0, size, 0, PI2, true );
+						context.fill();
+
+					}
+
+				});
 			}
 
 			function onWindowResize() {
@@ -111,7 +129,7 @@
 			}
 
 			function render() {
-
+				// camera.lookAt(scene.position);
 				renderer.render( scene, camera );
 
 			}
