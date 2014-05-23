@@ -59,15 +59,35 @@
 
 				// particles
 
-				for ( var i = 0; i < 1000; i ++ ) {
+				for ( var i = 0; i < 200; i ++ ) {
 
 					particle = new THREE.Sprite(generateStar());
-					particle.position.x = Math.random() * 5 - 4;
+					
+					var z = Math.random() - 0.5;
+
+					particle.position.x = Math.cos(z * 90 * Math.PI / 180) - 0.5;
+					particle.position.z = z;
+
 					particle.position.y = Math.random() * 0.1 - 0.05;
-					particle.position.z = Math.random() * 5 - 4;
-					// particle.position.normalize();
-					particle.position.multiplyScalar( Math.random() * 10 + 450 );
-					// particle.scale.x = particle.scale.y = 10;
+
+					particle.position.multiplyScalar( Math.random() * 10 + 500);
+					
+					scene.add( particle );
+
+				}
+
+				for ( var i = 0; i < 200; i ++ ) {
+
+					particle = new THREE.Sprite(generateStar());
+					
+					var x = Math.random() - 0.5;
+					
+					particle.position.x = x;
+					particle.position.z = Math.cos(x * 90 * Math.PI / 180) - 0.5;
+
+					particle.position.y = Math.random() * 0.1 - 0.05;
+
+					particle.position.multiplyScalar( Math.random() * 10 + 500);
 					
 					scene.add( particle );
 
