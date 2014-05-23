@@ -20,9 +20,9 @@
 	<body>
 
 		<div id="container"></div>
-		<script src="three.min.js"></script>
-		<script src="stats.min.js"></script>
-		<script src="OrbitControls.js"></script>
+		<script src="js/three.min.js"></script>
+		<script src="js/stats.min.js"></script>
+		<script src="js/OrbitControls.js"></script>
 
 		<script>
 
@@ -75,7 +75,7 @@
 
 					particle = new THREE.Sprite( material );
 					particle.position.x = Math.random() * 5 - 4;
-					particle.position.y = Math.random() * 1 - 0.5;
+					particle.position.y = Math.random() * 2 - 1;
 					particle.position.z = Math.random() * 5 - 4;
 					// particle.position.normalize();
 					particle.position.multiplyScalar( Math.random() * 10 + 450 );
