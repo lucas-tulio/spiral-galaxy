@@ -46,6 +46,7 @@
 
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.z = 100;
+				camera.position.y = 1000;
 
 				controls = new THREE.OrbitControls( camera );
 				controls.addEventListener( 'change', render );
@@ -57,37 +58,27 @@
 				container.appendChild( renderer.domElement );
 
 				// particles
-				var maxStars = 500;
-				for ( var i = 0; i < maxStars; i ++ ) {
+				var numIterations = 1000;
+				for (var i = 0; i <= numIterations; i++) { 
+					
+					var angle = i / 100;
+					var radius = angle;
+
+					var x = radius * Math.cos(angle) + rand();
+					var y = radius * Math.sin(angle) + rand();
 
 					particle = new THREE.Sprite(generateStar());
-					
-					particle.position.x = Math.cos(i*1.1 * Math.PI / 180);
-					particle.position.z = Math.sin(i * Math.PI / 180);
 
-					particle.position.y = rand() * 0.2 - 0.1;
+					particle.position.x = x;
+					particle.position.z = y;
+
+					particle.position.y = rand();
 					particle.scale.x = particle.scale.y = 10;
 					particle.position.multiplyScalar( Math.random() * 10 + 500);
 					
 					scene.add( particle );
 
 				}
-
-				//for ( var i = 0; i < maxStars; i ++ ) {
-
-//					particle = new THREE.Sprite(generateStar());
-					
-//					particle.position.x = Math.sin(i*1.2 * Math.PI / 180);
-//					particle.position.z = Math.cos(i * Math.PI / 180);
-
-//					particle.position.y = rand() * 0.2 - 0.1;
-//					particle.scale.x = particle.scale.y = 10;
-
-//					particle.position.multiplyScalar( Math.random() * 10 + 500);
-					
-//					scene.add( particle );
-
-//				}
 
 				// Resize listener
 				window.addEventListener( 'resize', onWindowResize, false );
@@ -100,10 +91,12 @@
 				var color, size;
 
 				if(chance <= 0.85) {
-					color = 0xff0000;
+					// color = 0xff0000;
+					color = 0xffffff;
 					size = 0.5;
 				} else if(chance > 0.85 && chance < 0.95) {
-					color = 0xffff00;
+					// color = 0xffff00;
+					color = 0xffffff;
 					size = 1;
 				} else {
 					color = 0xffffff;
