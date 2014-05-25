@@ -30,7 +30,8 @@
 			windowHalfX = window.innerWidth / 2,
 			windowHalfY = window.innerHeight / 2,
 
-			camera, scene, renderer;
+			camera, scene, renderer,
+			particleSystem;
 
 			var PI2 = Math.PI * 2;
 
@@ -61,9 +62,14 @@
 				numIterations = 720;
 				arms = 4;
 				var particles = new THREE.Geometry();
+				texture = new THREE.Texture(generateTexture());
+				texture.needsUpdate = true;
 				var material = new THREE.ParticleBasicMaterial({
 					color: 0xffffff,
-					size: 0.01
+					size: 0.1,
+					map: texture,
+					blending: THREE.AdditiveBlending,
+					transparent: true
 				});
 
 				for (arm = 0; arm < arms; arm++) {
@@ -81,7 +87,8 @@
 					}
 				}
 				
-				var particleSystem = new THREE.ParticleSystem(particles, material);
+				particleSystem = new THREE.ParticleSystem(particles, material);
+				particleSystem.sortParticles = true;
 				scene.add(particleSystem);
 
 				// Resize listener
@@ -89,19 +96,31 @@
 
 			}
 
-			function generateStar() {
+			function generateTexture() {
 
-				var chance = Math.random();
-				var color, size;
-				color = 0xffffff;
-				
-				if(chance <= 0.85) {
-					size = 0.5;
-				} else if(chance > 0.85 && chance < 0.95) {
-					size = 1;
-				} else {
-					size = 2;
-				}
+				// draw a circle in the center of the canvas
+				var size = 32;
+
+				// create canvas
+				var canvas = document.createElement( 'canvas' );
+				canvas.width = size;
+				canvas.height = size;
+
+				// get context
+				var context = canvas.getContext( '2d' );
+
+				// draw circle
+				var centerX = size / 2;
+				var centerY = size / 2;
+				var radius = size / 2;
+
+				context.beginPath();
+				context.arc( centerX, centerY, radius, 0, 2 * Math.PI, false );
+				context.fillStyle = "#FFFFFF";
+				context.fill();
+
+				return canvas;
+
 			}
 
 			function onWindowResize() {
@@ -117,11 +136,12 @@
 			}
 
 			function animate() {
+				
+				particleSystem.rotation.y += 0.0001;
 
 				controls.update();
 				requestAnimationFrame( animate );
 				render();
-
 			}
 
 			function render() {
