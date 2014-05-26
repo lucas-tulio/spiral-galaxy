@@ -61,9 +61,11 @@
 				// particles
 				numIterations = 720;
 				arms = 4;
+				
 				var particles = new THREE.Geometry();
 				texture = new THREE.Texture(generateTexture());
 				texture.needsUpdate = true;
+
 				var material = new THREE.ParticleBasicMaterial({
 					color: 0xffffff,
 					size: 0.1,
@@ -72,14 +74,16 @@
 					transparent: true
 				});
 
+				var armAngle = 270 / arms;
+
 				for (arm = 0; arm < arms; arm++) {
 					for (i = 0; i <= numIterations; i++) { 
 
 						radius = i / 50;
-						angle = i / 100 + arm * 30;
+						angle = i / 100 + (armAngle * (arm + 1));
 
 						x = radius * Math.cos(angle) + rand();
-						y = rand();
+						y = rand() / 5;
 						z = radius * Math.sin(angle) + rand();
 
 						particle = new THREE.Vector3(x, y, z);
