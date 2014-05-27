@@ -40,14 +40,14 @@
 
 			function init() {
 
-				var container, particles, particle;
+				var container, galaxy;
 
 				container = document.createElement('div');
 				document.body.appendChild(container);
 
 				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 10;
-				camera.position.y = 10;
+				camera.position.z = 6;
+				camera.position.y = 6;
 
 				controls = new THREE.OrbitControls( camera );
 				controls.addEventListener( 'change', render );
@@ -58,21 +58,13 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
-				// particles
-				numIterations = 2880;
+				// Generate the Galaxy
+				var galaxy = new THREE.Geometry();
+				numIterations = 1440;
 				arms = 4;
-				
-				var particles = new THREE.Geometry();
-				texture = new THREE.Texture(generateTexture());
-				texture.needsUpdate = true;
 
-				var material = new THREE.ParticleBasicMaterial({
-					color: 0xffffff,
-					size: 0.1,
-					map: texture,
-					blending: THREE.AdditiveBlending,
-					transparent: true
-				});
+				circleTexture = new THREE.Texture(generateCircleTexture());
+				circleTexture.needsUpdate = true;
 
 				var armAngle = 270 / arms;
 
@@ -86,12 +78,15 @@
 						y = rand() / 5;
 						z = radius * Math.sin(angle) + rand();
 
-						particle = new THREE.Vector3(x, y, z);
-						particles.vertices.push(particle);
+						// Generate about 50%+ with some variation for a better result
+						galaxy.vertices.push(new THREE.Vector3(x, y, z));
+						if(rand() >= 0) {
+							galaxy.vertices.push(new THREE.Vector3(x + rand(), y + rand(), z + rand()));
+						}
 					}
 				}
 				
-				particleSystem = new THREE.ParticleSystem(particles, material);
+				particleSystem = new THREE.ParticleSystem(galaxy, generateStarMaterial());
 				particleSystem.sortParticles = true;
 				scene.add(particleSystem);
 
@@ -100,7 +95,7 @@
 
 			}
 
-			function generateTexture() {
+			function generateCircleTexture() {
 
 				// draw a circle in the center of the canvas
 				var size = 32;
@@ -120,11 +115,20 @@
 
 				context.beginPath();
 				context.arc( centerX, centerY, radius, 0, 2 * Math.PI, false );
-				context.fillStyle = "#FFFFFF";
+				context.fillStyle = "#ffffff";
 				context.fill();
 
 				return canvas;
+			}
 
+			function generateStarMaterial() {
+				return new THREE.ParticleBasicMaterial({
+					color: 0xffffff,
+					size: 0.05 + Math.random() * 0.03,
+					map: circleTexture,
+					blending: THREE.AdditiveBlending,
+					transparent: true
+				});
 			}
 
 			function onWindowResize() {
