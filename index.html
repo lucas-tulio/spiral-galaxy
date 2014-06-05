@@ -77,6 +77,11 @@
 						y = rand() / 5;
 						z = radius * Math.sin(angle) + rand();
 
+						randResult = Math.random() * (numIterations);
+						if(randResult < i*i) {
+							galaxy.vertices.push(new THREE.Vector3(x + rand(), y + rand(), z + rand()));
+						}
+
 						// Generate about 50%+ with some variation for a better result
 						galaxy.vertices.push(new THREE.Vector3(x, y, z));
 						if(rand() >= 0) {
