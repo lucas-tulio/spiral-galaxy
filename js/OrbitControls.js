@@ -279,8 +279,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		this.object.lookAt( this.target );
 
-		thetaDelta = 0;
-		phiDelta = 0;
+		thetaDelta *= 0.8;
+		phiDelta *= 0.8;
 		scale = 1;
 		pan.set( 0, 0, 0 );
 
