@@ -105,22 +105,24 @@
 				var size = 64;
 
 				// create canvas
-				var canvas = document.createElement( 'canvas' );
+				var canvas = document.createElement('canvas');
 				canvas.width = size;
 				canvas.height = size;
 
 				// get context
-				var context = canvas.getContext( '2d' );
+				var context = canvas.getContext('2d');
 
 				// draw circle
 				var centerX = size / 2;
 				var centerY = size / 2;
 				var radius = size / 2;
 
-				context.beginPath();
-				context.arc( centerX, centerY, radius, 0, 2 * Math.PI, false );
-				context.fillStyle = "#ffffff";
-				context.fill();
+				for(var i = 1; i < 33; i++) {
+					context.beginPath();
+					context.arc(centerX, centerY, (radius / 2) + (i / 2), 0, 2 * Math.PI, false);
+					context.fillStyle = "rgba(255, 255, 255, " + (1 / i) + ")";
+					context.fill();
+				}
 
 				return canvas;
 			}
