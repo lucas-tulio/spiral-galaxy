@@ -251,8 +251,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		}
 
-		theta += thetaDelta;
-		phi += phiDelta;
+		theta += thetaDelta / 20;
+		phi += phiDelta / 20;
 
 		// restrict phi to be between desired limits
 		phi = Math.max( this.minPolarAngle, Math.min( this.maxPolarAngle, phi ) );
@@ -279,8 +279,8 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 		this.object.lookAt( this.target );
 
-		thetaDelta *= 0.8;
-		phiDelta *= 0.8;
+		thetaDelta = thetaDelta * 0.995;
+		phiDelta = phiDelta * 0.995;
 		scale = 1;
 		pan.set( 0, 0, 0 );
 
