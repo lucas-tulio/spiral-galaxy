@@ -9,6 +9,8 @@
 				background-color: #000000;
 				margin: 0px;
 				overflow: hidden;
+				color: #fff;
+				font-family: helvetica, sans-serif;
 			}
 
 			a {
@@ -17,11 +19,12 @@
 		</style>
 	</head>
 	<body>
-
+		<div id="message"></div>
 		<div id="container"></div>
 		<script src="js/three.min.js"></script>
 		<script src="js/stats.min.js"></script>
 		<script src="js/OrbitControls.js"></script>
+		<script src="js/Detector.js"></script>
 
 		<script>
 
@@ -52,8 +55,8 @@
 				controls.addEventListener( 'change', render );
 
 				scene = new THREE.Scene();
-
-				renderer = new THREE.WebGLRenderer();
+				
+				renderer = Detector.webgl? new THREE.WebGLRenderer(): document.getElementById("message").textContent = "Your browser does not support WebGL.";
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
