@@ -22,9 +22,46 @@
 		<div id="message"></div>
 		<div id="container"></div>
 		<script src="js/three.min.js"></script>
-		<script src="js/stats.min.js"></script>
 		<script src="js/OrbitControls.js"></script>
 		<script src="js/Detector.js"></script>
+
+		<script type="x-shader/x-vertex" id="vertexshader">
+
+			attribute float size;
+			attribute vec3 ca;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				vColor = ca;
+
+				vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+				gl_PointSize = size;
+				gl_PointSize = size * ( 100.0 / length( mvPosition.xyz ) );
+
+				gl_Position = projectionMatrix * mvPosition;
+
+			}
+
+		</script>
+
+		<script type="x-shader/x-fragment" id="fragmentshader">
+
+			uniform vec3 color;
+			uniform sampler2D texture;
+
+			varying vec3 vColor;
+
+			void main() {
+
+				gl_FragColor = vec4( color * vColor, 1.0 );
+				gl_FragColor = gl_FragColor * texture2D( texture, gl_PointCoord );
+
+			}
+
+		</script>
 
 		<script>
 
@@ -60,18 +97,41 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				container.appendChild( renderer.domElement );
 
-				// Generate the Galaxy
-				var galaxy = new THREE.Geometry();
-				numIterations = 1200;
-				arms = 4;
-
-				circleTexture = new THREE.Texture(generateCircleTexture());
+				// Generate the circle texture
+				var circleTexture = new THREE.Texture(generateCircleTexture());
 				circleTexture.needsUpdate = true;
 
+				// Set up the shaders
+				attributes = {
+					size: {	type: 'f', value: [] },
+					ca:   {	type: 'c', value: [] }
+				};
+
+				uniforms = {
+					amplitude: { type: "f", value: 1.0 },
+					color:     { type: "c", value: new THREE.Color( 0xffffff ) },
+					texture:   { type: "t", value: circleTexture },
+				};
+
+				uniforms.texture.value.wrapS = uniforms.texture.value.wrapT = THREE.RepeatWrapping;
+
+				var shaderMaterial = new THREE.ShaderMaterial( {
+					uniforms: 		uniforms,
+					attributes:     attributes,
+					vertexShader:   document.getElementById( 'vertexshader' ).textContent,
+					fragmentShader: document.getElementById( 'fragmentshader' ).textContent,
+					transparent:	true
+				});
+
+				// Galaxy properties
+				var galaxy = new THREE.Geometry();
+				var starsPerArm = 1000;
+				var arms = 4;
 				var armAngle = 270 / arms;
 
+				// Create the galaxy structure
 				for (arm = 0; arm < arms; arm++) {
-					for (i = 0; i <= numIterations; i++) { 
+					for (i = 0; i <= starsPerArm; i++) {
 
 						radius = i / 50;
 						angle = i / 100 + (armAngle * (arm + 1));
@@ -80,26 +140,46 @@
 						y = rand() / 5;
 						z = radius * Math.sin(angle) + rand();
 
-						randResult = Math.random() * (numIterations);
+						// Add stars
+						randResult = Math.random() * (starsPerArm);
 						if(randResult < i*i) {
 							galaxy.vertices.push(new THREE.Vector3(x + rand(), y + rand(), z + rand()));
 						}
 
-						// Generate about 50%+ with some variation for a better result
+						// Add about 50% more stars with some position variation for a better result
 						galaxy.vertices.push(new THREE.Vector3(x, y, z));
 						if(rand() >= 0) {
 							galaxy.vertices.push(new THREE.Vector3(x + rand(), y + rand(), z + rand()));
 						}
 					}
 				}
-				
-				particleSystem = new THREE.ParticleSystem(galaxy, generateStarMaterial());
+
+				// Create the particle system
+				particleSystem = new THREE.ParticleSystem(galaxy, shaderMaterial);
 				particleSystem.sortParticles = true;
+				
+				// Data to send to the shader
+				numVertices = galaxy.vertices.length;
+				var vertices = particleSystem.geometry.vertices;
+				var values_size = attributes.size.value;
+				var values_color = attributes.ca.value;
+
+				// Color variation
+				for( var v = 0; v < vertices.length; v++ ) {
+
+					values_size[ v ] = 0.5;
+					values_color[ v ] = new THREE.Color( 0xffffff );
+					values_color[ v ].setRGB(1,
+											 1,
+											 1);
+
+				}
+
+				// Add the particle system to the scene
 				scene.add(particleSystem);
 
 				// Resize listener
 				window.addEventListener( 'resize', onWindowResize, false );
-
 			}
 
 			function generateCircleTexture() {
@@ -128,16 +208,6 @@
 				}
 
 				return canvas;
-			}
-
-			function generateStarMaterial() {
-				return new THREE.ParticleBasicMaterial({
-					color: 0xffffff,
-					size: 0.05 + Math.random() * 0.03,
-					map: circleTexture,
-					blending: THREE.AdditiveBlending,
-					transparent: true
-				});
 			}
 
 			function onWindowResize() {
