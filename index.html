@@ -126,14 +126,14 @@
 				// Galaxy properties
 				var galaxy = new THREE.Geometry();
 				var starsPerArm = 1000;
-				var arms = 4;
+				var arms = 5;
 				var armAngle = 270 / arms;
 
 				// Create the galaxy structure
 				for (arm = 0; arm < arms; arm++) {
 					for (i = 0; i <= starsPerArm; i++) {
 
-						radius = i / 50;
+						radius = i / 40;
 						angle = i / 100 + (armAngle * (arm + 1));
 
 						x = radius * Math.cos(angle) + rand();
@@ -159,20 +159,18 @@
 				particleSystem.sortParticles = true;
 				
 				// Data to send to the shader
-				numVertices = galaxy.vertices.length;
 				var vertices = particleSystem.geometry.vertices;
 				var values_size = attributes.size.value;
 				var values_color = attributes.ca.value;
+				console.log("vertices = " + vertices.length);
 
 				// Color variation
 				for( var v = 0; v < vertices.length; v++ ) {
 
-					values_size[ v ] = 0.5;
+					values_size[ v ] = 0.2 + rand();
 					values_color[ v ] = new THREE.Color( 0xffffff );
-					values_color[ v ].setRGB(1,
-											 1,
-											 1);
-
+					var starType = Math.random();
+					values_color[ v ].setRGB(1, 1, 1);
 				}
 
 				// Add the particle system to the scene
