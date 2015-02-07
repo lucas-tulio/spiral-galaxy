@@ -1,5 +1,5 @@
-Procedural Galaxy Generator
-===========================
+Spiral Galaxy
+=============
 
 Galaxy generator in three.js.
 
